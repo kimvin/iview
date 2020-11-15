@@ -24,13 +24,15 @@
 
     &-track {
         position: relative;
-        top: 0;
+        top: 100%;
         left: 0;
         display: block;
-
         overflow: hidden;
-
         z-index: 1;
+        &.higher {
+            z-index: 2;
+            top: 0;
+        }
     }
 
     &-item {
@@ -159,6 +161,11 @@
                 color: transparent;
 
                 transition: all .5s;
+                &.radius {
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 50%;
+                }
             }
 
             &:hover > button {
@@ -168,6 +175,9 @@
             &.@{carousel-prefix-cls}-active > button {
                 opacity: 1;
                 width: 24px;
+                &.radius{
+                    width: 6px;
+                }
             }
         }
     }

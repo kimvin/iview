@@ -1,22 +1,22 @@
-.motion-common() {
-    animation-duration: @animation-time;
+.motion-common(@time) {
+    animation-duration: @time;
     animation-fill-mode: both;
 }
 
-.make-motion(@className, @keyframeName) {
-    .@{className}-enter, .@{className}-appear {
-        .motion-common();
+.make-motion(@className, @keyframeName, @time: @animation-time) {
+    .@{className}-enter-active, .@{className}-appear {
+        .motion-common(@time);
         animation-play-state: paused;
     }
-    .@{className}-leave {
-        .motion-common();
+    .@{className}-leave-active {
+        .motion-common(@time);
         animation-play-state: paused;
     }
-    .@{className}-enter, .@{className}-appear {
+    .@{className}-enter-active, .@{className}-appear {
         animation-name: ~"@{keyframeName}In";
         animation-play-state: running;
     }
-    .@{className}-leave {
+    .@{className}-leave-active {
         animation-name: ~"@{keyframeName}Out";
         animation-play-state: running;
     }
@@ -26,3 +26,7 @@
 @import "move";
 @import "ease";
 @import "slide";
+
+.collapse-transition {
+    transition: @transition-time height ease-in-out, @transition-time padding-top ease-in-out, @transition-time padding-bottom ease-in-out;
+}

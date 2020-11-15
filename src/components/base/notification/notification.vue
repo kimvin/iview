@@ -1,12 +1,18 @@
 <template>
-    <div :class="classes" :style="style">
-        <Notice v-for="notice in notices"
+    <div :class="classes" :style="wrapStyles">
+        <Notice
+            v-for="notice in notices"
+            :key="notice.name"
             :prefix-cls="prefixCls"
-            :style="notice.style"
+            :styles="notice.styles"
+            :type="notice.type"
             :content="notice.content"
             :duration="notice.duration"
+            :render="notice.render"
+            :has-title="notice.hasTitle"
+            :withIcon="notice.withIcon"
             :closable="notice.closable"
-            :key="notice.key"
+            :name="notice.name"
             :transition-name="notice.transitionName"
             :on-close="notice.onClose">
         </Notice>
@@ -14,6 +20,8 @@
 </template>
 <script>
     import Notice from './notice.vue';
+
+    import { transferIndex, transferIncrease } from '../../../utils/transfer-queue';
 
     const prefixCls = 'ivu-notification';
     let seed = 0;
@@ -30,7 +38,7 @@
                 type: String,
                 default: prefixCls
             },
-            style: {
+            styles: {
                 type: Object,
                 default: function () {
                     return {
@@ -48,7 +56,8 @@
         },
         data () {
             return {
-                notices: []
+                notices: [],
+                tIndex: this.handleGetIndex()
             };
         },
         computed: {
@@ -59,34 +68,47 @@
                         [`${this.className}`]: !!this.className
                     }
                 ];
+            },
+            wrapStyles () {
+                let styles = Object.assign({}, this.styles);
+                styles['z-index'] = 1010 + this.tIndex;
+
+                return styles;
             }
         },
         methods: {
             add (notice) {
-                const key = notice.key || getUuid();
+                const name = notice.name || getUuid();
 
                 let _notice = Object.assign({
-                    style: {
+                    styles: {
                         right: '50%'
                     },
                     content: '',
                     duration: 1.5,
                     closable: false,
-                    key: key
+                    name: name
                 }, notice);
 
                 this.notices.push(_notice);
+                this.tIndex = this.handleGetIndex();
             },
-            close (key) {
+            close (name) {
                 const notices = this.notices;
-
                 for (let i = 0; i < notices.length; i++) {
-                    if (notices[i].key === key) {
+                    if (notices[i].name === name) {
                         this.notices.splice(i, 1);
                         break;
                     }
                 }
-            }
+            },
+            closeAll () {
+                this.notices = [];
+            },
+            handleGetIndex () {
+                transferIncrease();
+                return transferIndex;
+            },
         }
     };
 </script>
